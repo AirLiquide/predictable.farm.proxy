@@ -1,5 +1,5 @@
 {
-  "name": "pred-bridge",
+  "name": "pred-proxy",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,8 +8,8 @@
   },
   "author": "",
   "license": "ISC",
-
   "dependencies": {
+    "redbird": "git+https://github.com/OptimalBits/redbird.git",
     "sync-request": "^4.1.0"
   }
 }
