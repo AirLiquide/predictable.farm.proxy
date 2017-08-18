@@ -56,9 +56,9 @@ customResolver.priority = 1000;
 
 var proxy = require('redbird')({port: 8090, resolvers: [customResolver]});
 
+proxy.register("http://ecf-berlin.predictable.farm", "http://127.0.0.1:4001");
 proxy.register("http://ecf-berlin.predictable.farm/automation", "http://127.0.0.1:4002/recipes/");
 proxy.register("http://ecf-berlin.predictable.farm/recipes", "http://127.0.0.1:4002/recipes/");
-//proxy.register("http://ecf-berlin.predictable.farm/automation", "http://ecf-berlin.predictable.farm/automation/");
 proxy.register("http://ecf-berlin.predictable.farm/socket", "http://127.0.0.1:4003");
 
 proxy.register("http://playground.predictable.farm", "http://127.0.0.1:3001");
