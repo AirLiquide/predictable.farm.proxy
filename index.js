@@ -1,8 +1,12 @@
 var request = require('sync-request');
 
 var authApiUrl = "http://localhost:8080";
+var global.env = process.env.NODE_ENV || "CLOUD";
 
 var customResolver = function (host, url, req) {
+    if(global.env && global.env === "LOCAL"){
+        return;
+    }
     console.log("*********");
     console.log("*********");
     console.log("*********");
