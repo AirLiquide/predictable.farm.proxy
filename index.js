@@ -9,7 +9,7 @@ var customResolver = function (host, url, req) {
     console.log("requesting", host + url);
 
 
-    if (url == "/login" || url == "/admin" || url == "/add-user" || url
+    if (url == "/login" || url.indexOf("/admin") === 0 || url
         == "/logout" || url.indexOf('/register') === 0 || url.indexOf('/auth_public') === 0) {
         console.log('this is a auth service request');
         return authApiUrl + "?continue=" + host;
