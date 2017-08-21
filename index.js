@@ -18,7 +18,7 @@ var customResolver = function (host, url, req) {
 
 
         console.log("checking user rights");
-        if (req.headers.upgrade) {
+        if (req.headers.upgrade || url.indexOf('/socket') === 0) {
             console.log("this is a websocket request don't do auth  ");
             return;
         }
