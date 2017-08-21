@@ -1,6 +1,6 @@
 var request = require('sync-request');
 
-var authApiUrl = "http://localhost:8000";
+var authApiUrl = "http://localhost:8080";
 
 var customResolver = function (host, url, req) {
     console.log("*********");
