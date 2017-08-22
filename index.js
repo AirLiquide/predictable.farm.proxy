@@ -1,10 +1,10 @@
 var request = require('sync-request');
 
 var authApiUrl = "http://localhost:8080";
-var global.env = process.env.NODE_ENV || "CLOUD";
+var env = process.env.NODE_ENV || "CLOUD";
 
 var customResolver = function (host, url, req) {
-    if(global.env && global.env === "LOCAL"){
+    if(env && env === "LOCAL"){
         return;
     }
     console.log("*********");
@@ -65,6 +65,6 @@ proxy.register("http://ecf-berlin.predictable.farm/automation", "http://127.0.0.
 proxy.register("http://ecf-berlin.predictable.farm/recipes", "http://127.0.0.1:4002/recipes/");
 proxy.register("http://ecf-berlin.predictable.farm/socket", "http://127.0.0.1:4003");
 
-proxy.register("http://playground.predictable.farm", "http://127.0.0.1:3001");
-proxy.register("http://playground.predictable.farm/recipes", "http://127.0.0.1:3002/recipes/");
-proxy.register("http://playground.predictable.farm/socket", "http://127.0.0.1:3003");
+proxy.register("http://playground.predictable.farm", "http://127.0.0.1:4007");
+proxy.register("http://playground.predictable.farm/recipes", "http://127.0.0.1:4005/recipes/");
+proxy.register("http://playground.predictable.farm/socket", "http://127.0.0.1:4006");
