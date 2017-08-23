@@ -28,7 +28,7 @@ var customResolver = function (host, url, req) {
         }
 
         var res = request('GET', authApiUrl + '/api/user/status?url=' + host, {
-            'headers': req.headers, timeout: 2000, maxRetries: 3
+            'headers': {cookie:req.headers.cookie}, timeout: 2000, maxRetries: 3
         });
 
 
