@@ -7,13 +7,14 @@ var customResolver = function (host, url, req) {
     if(env && env === "LOCAL"){
         return;
     }
-    console.log("*********");
-    console.log("*********");
-    console.log("*********");
+    console.log("");
+    console.log("");
+    console.log("");
     console.log("requesting", host + url);
 
 
-    if (url.indexOf("/login") || url.indexOf("/admin") === 0 || url
+//if the url is missing a trailing slash or it's one of the auth url or it's an admin or it's the url for the auth app assets
+    if (url === "/recipes" || url.indexOf("/login") || url.indexOf("/admin") === 0 || url
         == "/logout" || url.indexOf('/register') === 0 || url.indexOf('/auth_public') === 0) {
         console.log('this is a auth service request');
         return authApiUrl + "?continue=" + host;
@@ -31,9 +32,6 @@ var customResolver = function (host, url, req) {
             'headers': {cookie:req.headers.cookie}, timeout: 2000, maxRetries: 3
         });
 
-        if(url === "/recipes"){
-            return  req.host + "/recipes/";
-        }
 
         var data = JSON.parse(res.getBody('utf8'));
         console.log(data);
@@ -56,7 +54,7 @@ var customResolver = function (host, url, req) {
         console.error(e);
     }
 
-    console.log("*********");
+    console.log("***END***");
 };
 
 customResolver.priority = 1000;
