@@ -1,7 +1,10 @@
 var request = require('sync-request');
 
-var authApiUrl = "http://localhost:8080";
-var env = process.env.NODE_ENV || "CLOUD";
+
+var http = "http://";
+var authApiUrlPort = ":8080";
+//var authApiUrl = "http://18.195.118.148:8080";
+var env = "CLOUD";
 
 var customResolver = function (host, url, req) {
     if(env && env === "LOCAL"){
@@ -9,15 +12,21 @@ var customResolver = function (host, url, req) {
     }
     console.log("");
     console.log("");
+    console.log("Custom resolver");
     console.log("");
     console.log("requesting", host + url);
 
 
-//if the url is missing a trailing slash or it's one of the auth url or it's an admin or it's the url for the auth app assets
-    if (url === "/recipes" || url.indexOf("/login") || url.indexOf("/admin") === 0 || url
-        == "/logout" || url.indexOf('/register') === 0 || url.indexOf('/auth_public') === 0) {
-        console.log('this is a auth service request');
-        return authApiUrl + "?continue=" + host;
+   if ( (url.indexOf("recipes") > -1) 
+        || (url.indexOf("login") > -1) 
+        || (url.indexOf("auth_public") > -1) 
+        || (url.indexOf("admin") > -1) 
+        || (url.indexOf("logout") > -1) 
+        || (url.indexOf("register") > -1) 
+        || (url.indexOf("auth_public") > -1) 
+    ){
+        console.log('this is a auth service request ' + url);
+        return http + host + authApiUrlPort + "?continue=" + host;
     }
     try {
 
@@ -28,7 +37,7 @@ var customResolver = function (host, url, req) {
             return;
         }
 
-        var res = request('GET', authApiUrl + '/api/user/status?url=' + host, {
+        var res = request('GET', http + host + authApiUrlPort + '/api/user/status?url=' + host, {
             'headers': {cookie:req.headers.cookie}, timeout: 2000, maxRetries: 3
         });
 
@@ -42,10 +51,10 @@ var customResolver = function (host, url, req) {
                 break;
             case "not_connected":
             default:
-                return authApiUrl + "/login";
+                return http + host + authApiUrlPort + "/login";
                 break;
             case "no_access_to_farm":
-                return authApiUrl + "/login?message=no_acces_to_farm";
+                return http + host + authApiUrlPort + "/login?message=no_acces_to_farm";
                 break;
 
         }
@@ -61,11 +70,29 @@ customResolver.priority = 1000;
 
 var proxy = require('redbird')({port: 80, resolvers: [customResolver]});
 
-proxy.register("http://ecf-berlin.predictable.farm", "http://127.0.0.1:4001");
-proxy.register("http://ecf-berlin.predictable.farm/automation", "http://127.0.0.1:4002/recipes/");
-proxy.register("http://ecf-berlin.predictable.farm/recipes", "http://127.0.0.1:4002/recipes/");
-proxy.register("http://ecf-berlin.predictable.farm/socket", "http://127.0.0.1:4003");
+//proxy.register("al-factory.me/auth_public", "al-factory.me:8080/auth_public");
 
+
+proxy.register("http://ecf-berlin.predictable.farm", "http://35.158.33.67:4001");
+proxy.register("http://ecf-berlin.predictable.farm/automation", "http://35.158.33.67:4002/recipes/");
+proxy.register("http://ecf-berlin.predictable.farm/recipes", "http://35.158.33.67:4002/recipes/");
+proxy.register("http://ecf-berlin.predictable.farm/socket", "http://35.158.33.67:4003");
+
+
+
+proxy.register("http://ecf-berlin.al-factory.me", "http://35.158.33.67:4001");
+proxy.register("http://ecf-berlin.al-factory.me/automation", "http://35.158.33.67:4002/recipes/");
+proxy.register("http://ecf-berlin.al-factory.merecipes", "http://35.158.33.67:4002/recipes/");
+proxy.register("http://ecf-berlin.al-factory.me/socket", "http://35.158.33.67:4003");
+
+
+proxy.register("http://altec-water-bxl.predictable.farm", "http://52.58.60.136:4001");
+proxy.register("http://altec-water-bxl.predictable.farm/automation", "http://52.58.60.136:4002/recipes/");
+proxy.register("http://altec-water-bxl.predictable.farm/recipes", "http://52.58.60.136:4002/recipes/");
+proxy.register("http://altec-water-bxl.predictable.farm/socket", "http://52.58.60.136:4003");
+
+/*
 proxy.register("http://playground.predictable.farm", "http://127.0.0.1:4007");
 proxy.register("http://playground.predictable.farm/recipes", "http://127.0.0.1:4005/recipes/");
 proxy.register("http://playground.predictable.farm/socket", "http://127.0.0.1:4006");
+*/
