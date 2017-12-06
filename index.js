@@ -6,6 +6,22 @@ var authApiUrlPort = ":8080";
 //var authApiUrl = "http://18.195.118.148:8080";
 var env = "CLOUD";
 
+function ipFromHostName( host)
+{
+        if(host == "altec-water-bxl.al-factory.me"
+                || host == "alwater-bxl.predictable.zone"
+                || host == "altec-water-bxl.predictable.farm") return  "http://52.58.60.136";
+
+                else if(host == "ecf-berlin.predictable.farm"
+                || host == "ecf-berlin.al-factory.me") return  "http://35.158.33.67";
+
+                else if(host == "lafactory.predictable.zone"
+                || host == "lafactory.al-factory.me"
+                ) return  "http://35.158.36.50";
+        else return null;
+}
+
+
 var customResolver = function (host, url, req) {
     if(env && env === "LOCAL"){
         return;
@@ -31,9 +47,10 @@ var customResolver = function (host, url, req) {
 
 
         console.log("checking user rights");
-        if (req.headers.upgrade || ((url.indexOf('/socket') === 0) && url.indexOf('/socket.io') < 0 )) {
+        if (req.headers.upgrade ||  url.indexOf('/socket.io') > 0 || ((url.indexOf('/socket') > -1) && url.indexOf('/socket.io') < 0 ) ) {
             console.log("this is a websocket request don't do auth  ");
-            return;
+
+            return ipFromHostName(host);
         }
 
         var res = request('GET', http + host + authApiUrlPort + '/api/user/status?url=' + host, {
@@ -46,13 +63,7 @@ var customResolver = function (host, url, req) {
 
         switch (data.status) {
             case "access_granted" :
-                if(host == "altec-water-bxl.al-factory.me" 
-                || host == "altec-water-bxl.predictable.farm") return  "http://52.58.60.136";
-
-                else if(host == "ecf-berlin.predictable.farm" 
-                || host == "lafactory.al-factory.me"
-                || host == "ecf-berlin.al-factory.me") return  "http://35.158.33.67";
-                else return;
+                return ipFromHostName(host);
                 break;
             case "not_connected":
             default:
