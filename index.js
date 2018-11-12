@@ -28,35 +28,32 @@
 
 var request = require('sync-request');
 
-var http = "http://";
-var authApiUrlPort = ":8080";
-var env = "CLOUD";
+try {
+    var CONFIG = require('./config');
+} catch (e) {
+    console.log('⚠ Config file missing. Do not forget to copy `config.json.dist` to `config.json`')
+    return;
+}
 
-function ipFromHostName(host)
-{
-        if(host == "altec-water-bxl.al-factory.me"
-                || host == "alwater-bxl.predictable.zone"
-                || host == "altec-water-bxl.predictable.farm") return  "http://52.58.60.136";
+var ipFromHostName = function(host) {
+    for (var i in CONFIG.servers) {
+        for (var k in CONFIG.servers[i].hosts) {
+            if (CONFIG.servers[i].hosts[k] == host) {
+                return "http://" + CONFIG.servers[i].ip;
+            }
+        }
+    }
 
-                else if(host == "ecf-berlin.predictable.farm"
-                || host == "ecf-berlin.al-factory.me") return  "http://35.158.33.67";
-
-                else if(host == "lafactory.predictable.zone"
-                || host == "lafactory.al-factory.me"
-                ) return  "http://35.158.36.50";
-        else return null;
+    return null;
 }
 
 var customResolver = function (host, url, req) {
-    if(env && env === "LOCAL"){
+    if (CONFIG.env && CONFIG.env === "LOCAL"){
         return;
     }
-    console.log("");
-    console.log("");
-    console.log("Custom resolver");
-    console.log("");
-    console.log("requesting", host + url);
 
+    console.log("\n\nCustom resolver\n");
+    console.log("requesting", host + url);
 
    if ( (url.indexOf("login") > -1) 
         || (url.indexOf("auth_public") > -1) 
@@ -66,10 +63,10 @@ var customResolver = function (host, url, req) {
         || (url.indexOf("auth_public") > -1) 
     ){
         console.log('this is a auth service request ' + url);
-        return http + host + authApiUrlPort + "?continue=" + host;
+        return "http://" + host + ":" + CONFIG.apiUrlPort + "?continue=" + host;
     }
-    try {
 
+    try {
 
         console.log("checking user rights");
         if (req.headers.upgrade ||  url.indexOf('/socket.io') > 0 || ((url.indexOf('/socket') > -1) && url.indexOf('/socket.io') < 0 ) ) {
@@ -78,10 +75,9 @@ var customResolver = function (host, url, req) {
             return ipFromHostName(host);
         }
 
-        var res = request('GET', http + host + authApiUrlPort + '/api/user/status?url=' + host, {
+        var res = request('GET', "http://" + host + ":" + CONFIG.apiUrlPort + '/api/user/status?url=' + host, {
             'headers': {cookie:req.headers.cookie}, timeout: 2000, maxRetries: 3
         });
-
 
         var data = JSON.parse(res.getBody('utf8'));
         console.log(data);
@@ -90,17 +86,15 @@ var customResolver = function (host, url, req) {
             case "access_granted" :
                 return ipFromHostName(host);
                 break;
+            case "no_access_to_farm":
+                return "http://" + host + ":" + CONFIG.apiUrlPort + "/login?message=no_acces_to_farm";
+                break;
             case "not_connected":
             default:
-                return http + host + authApiUrlPort + "/login";
+                return "http://" + host + ":" + CONFIG.apiUrlPort + "/login";
                 break;
-            case "no_access_to_farm":
-                return http + host + authApiUrlPort + "/login?message=no_acces_to_farm";
-                break;
-
         }
-    }
-    catch (e) {
+    } catch (e) {
         console.error(e);
     }
 
@@ -110,10 +104,3 @@ var customResolver = function (host, url, req) {
 customResolver.priority = 1000;
 
 var proxy = require('redbird')({port: 80, resolvers: [customResolver]});
-
-
-/*
-proxy.register("http://playground.predictable.farm", "http://127.0.0.1:4007");
-proxy.register("http://playground.predictable.farm/recipes", "http://127.0.0.1:4005/recipes/");
-proxy.register("http://playground.predictable.farm/socket", "http://127.0.0.1:4006");
-*/

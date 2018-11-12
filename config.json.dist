@@ -1,0 +1,14 @@
+{
+    "env" : "CLOUD",
+    "apiUrlPort": 8080,
+    "servers": [
+        {
+            "hosts": ["my-farm1.predictable-farm.domain", "my-farm1-alt.predictable-farm.domain", "altec-water-bxl.predictable.farm"],
+            "ip": "11.22.33.44"
+        },
+        {
+            "hosts": ["my-farm2.predictable-farm.domain", "my-farm2.other-domain.me"],
+            "ip": "66.77.88.99"
+        }
+    ]
+}
