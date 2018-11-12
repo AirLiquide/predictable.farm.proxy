@@ -1,15 +1,12 @@
 {
-  "name": "pred-proxy",
+  "name": "predictable.farm.proxy",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "author": "Air Liquide",
+  "license": "MIT",
   "dependencies": {
-    "redbird": "git+https://github.com/OptimalBits/redbird.git",
+    "redbird": "^0.8.0",
     "sync-request": "^4.1.0"
   }
 }
